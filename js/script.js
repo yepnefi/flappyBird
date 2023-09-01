@@ -60,7 +60,9 @@ document.addEventListener("DOMContentLoaded", () => {
         context.drawImage(bgImg, imgX + canvas.width, 0, canvas.width, canvas.height);
 
         // update img width
-        imgX -= scrollSpeed;
+        if (firstJump) {
+            imgX -= scrollSpeed;
+        }
 
         // when the first image goes completely out of view to the left, reset its position
         if (imgX <= -canvas.height) {
