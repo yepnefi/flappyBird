@@ -29,10 +29,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     function updateBird() {
-        // falling animation for bird
+        // add gravity to the velocity
         bird.velocityY += bird.gravity;
 
-        // Apply gravity after first jump
+        // Apply velocity after first jump
         if (firstJump) {
             bird.y += bird.velocityY;
         } else {
@@ -40,12 +40,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         // prevent bird from falling below canvas
         if (bird.y + bird.height > canvas.height) {
-            bird.y = canvas.height - bird.height;
-            bird.velocityY = 0; // stop downward movement
+            bird.y = canvas.height - bird.height; // set bird to the bottom of canvas
+            bird.velocityY = 0; // stop downward velocity
         }
         // prevent bird from going above the canvas
         if (bird.y < 0) {
-            bird.y = 0; // Set the bird's y-position to the top of the canvas
+            bird.y = 0; // Set bird to the top of the canvas
             bird.velocityY = 0; // stop the upward velocity
         }
     }
@@ -59,9 +59,10 @@ document.addEventListener("DOMContentLoaded", () => {
         // draw bg img 2
         context.drawImage(bgImg, imgX + canvas.width, 0, canvas.width, canvas.height);
 
-        // update img height
+        // update img width
         imgX -= scrollSpeed;
 
+        // when the first image goes completely out of view to the left, reset its position
         if (imgX <= -canvas.height) {
             imgX = 0;
         }
