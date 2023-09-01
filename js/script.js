@@ -1,6 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
     const canvas = document.getElementById('gamecanvas');
     const context = canvas.getContext('2d');
+    const bgImg = new Image(); // background image
+    bgImg.src = "bgspace.png";
+    const scrollSpeed = 2;
+    let imgX = 0;
     let firstJump = false;
 
     const bird = {
@@ -11,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
         velocityY: 0,  // Vertical velocity
         gravity: 0.2, // Gravity strength
         jumpStrength: -4, // Strength of the jump
-    }
+    };
 
     // jump when spacebar is hit
     document.addEventListener("keydown", (event) => {
@@ -37,17 +41,30 @@ document.addEventListener("DOMContentLoaded", () => {
         // prevent bird from falling below canvas
         if (bird.y + bird.height > canvas.height) {
             bird.y = canvas.height - bird.height;
-            bird.velocityY = 0;
+            bird.velocityY = 0; // stop downward movement
         }
         // prevent bird from going above the canvas
         if (bird.y < 0) {
             bird.y = 0; // Set the bird's y-position to the top of the canvas
-            bird.velocityY = 0; // Stop the upward velocity
+            bird.velocityY = 0; // stop the upward velocity
         }
     }
 
     function gameloop(){
         context.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas
+
+        // draw bg img 1
+        context.drawImage(bgImg, imgX, 0, canvas.width, canvas.height);
+
+        // draw bg img 2
+        context.drawImage(bgImg, imgX + canvas.width, 0, canvas.width, canvas.height);
+
+        // update img height
+        imgX -= scrollSpeed;
+
+        if (imgX <= -canvas.height) {
+            imgX = 0;
+        }
 
         updateBird(); // draw new bird position
 
