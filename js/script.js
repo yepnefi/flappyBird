@@ -17,6 +17,38 @@ document.addEventListener("DOMContentLoaded", () => {
         jumpStrength: -4, // Strength of the jump
     };
 
+
+    const obstacles = []; // array to store obstacles
+    const obstacleWidth = 30; // Width of the obstacles
+    const gapHeight = 100; // Gap height between top and bottom obstacles
+    const obstacleSpeed = 2; // Speed at which obstacles move from right to left
+
+    function createObstacle() {
+        const obstacle = {
+            x: canvas.width, // Start the obstacle from the right side of the canvas
+            topY: Math.random() * (canvas.height - gapHeight), // Random top obstacle position
+            bottomY: Math.random() * (canvas.height - gapHeight) + gapHeight, // Calculate bottom obstacle position
+        };
+        obstacles.push(obstacle);
+    }
+
+    function updateObstacles() {
+        for (let i = obstacles.length - 1; i >= 0; i--) {
+            const obstacle = obstacles[i];
+            obstacle.x -= obstacleSpeed; // Move obstacle to the left
+
+            // Remove obstacles that have moved out of the canvas
+            if (obstacle.x + obstacleWidth < 0) {
+                obstacles.splice(i, 1);
+            }
+        }
+
+        // Create new obstacles when needed
+        if (obstacles.length < 2) {
+            createObstacle();
+        }
+    }
+
     // jump when spacebar is hit
     document.addEventListener("keydown", (event) => {
         if (event.code === "Space") {
@@ -59,7 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // draw bg img 2
         context.drawImage(bgImg, imgX + canvas.width, 0, canvas.width, canvas.height);
 
-        // update img width
+        // update img width once first jump was performed
         if (firstJump) {
             imgX -= scrollSpeed;
         }
@@ -67,6 +99,15 @@ document.addEventListener("DOMContentLoaded", () => {
         // when the first image goes completely out of view to the left, reset its position
         if (imgX <= -canvas.height) {
             imgX = 0;
+        }
+        updateObstacles(); // Update and draw obstacles
+
+        context.fillStyle = "green"; // Obstacle color
+        for (const obstacle of obstacles) {
+            // Draw top obstacle
+            context.fillRect(obstacle.x, 0, obstacleWidth, obstacle.topY);
+            // Draw bottom obstacle
+            context.fillRect(obstacle.x, obstacle.bottomY, obstacleWidth, canvas.height - obstacle.bottomY);
         }
 
         updateBird(); // draw new bird position
