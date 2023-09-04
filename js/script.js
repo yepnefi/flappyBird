@@ -17,7 +17,6 @@ document.addEventListener("DOMContentLoaded", () => {
         jumpStrength: -4, // Strength of the jump
     };
 
-
     const obstacles = []; // array to store obstacles
     const obstacleWidth = 30; // Width of the obstacles
     const gapHeight = 100; // Gap height between top and bottom obstacles
@@ -66,11 +65,8 @@ document.addEventListener("DOMContentLoaded", () => {
         bird.velocityY += bird.gravity;
 
         // Apply velocity after first jump
-        if (firstJump) {
-            bird.y += bird.velocityY;
-        } else {
-            bird.y = canvas.height / 2.5; // Bird stays in the middle before the first jump
-        }
+        bird.y += bird.velocityY;
+
         // prevent bird from falling below canvas
         if (bird.y + bird.height > canvas.height) {
             bird.y = canvas.height - bird.height; // set bird to the bottom of canvas
@@ -83,7 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    function gameloop(){
+    function gameloop() {
         context.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas
 
         // draw bg img 1
@@ -92,9 +88,10 @@ document.addEventListener("DOMContentLoaded", () => {
         // draw bg img 2
         context.drawImage(bgImg, imgX + canvas.width, 0, canvas.width, canvas.height);
 
-        // update img width and obstacle position once first jump was performed
+        // do this once first jump was performed
         if (firstJump) {
-            imgX -= scrollSpeed;
+            imgX -= scrollSpeed; // movement of background image
+            updateBird(); // draw new bird position
             updateObstacles();// Update and draw obstacles
         }
 
@@ -111,11 +108,11 @@ document.addEventListener("DOMContentLoaded", () => {
             context.fillRect(obstacle.x, obstacle.bottomY, obstacleWidth, canvas.height - obstacle.bottomY);
         }
 
-        updateBird(); // draw new bird position
 
         context.fillStyle = "blue"; // bird color
         context.fillRect(bird.x, bird.y, bird.width, bird.height); // draw bird
         requestAnimationFrame(gameloop); // adds animation for each frame + repeats the loop
     }
-   gameloop();
+
+    gameloop(); // do the game
 });
