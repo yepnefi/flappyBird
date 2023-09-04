@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const scrollSpeed = 2;
     let imgX = 0;
     let firstJump = false; // flag to track first jump
+    let enemiesSpawned = false;
 
     const bird = {
         x: canvas.width / 100, // starting x position
@@ -17,36 +18,35 @@ document.addEventListener("DOMContentLoaded", () => {
         jumpStrength: -4, // Strength of the jump
     };
 
-    const obstacles = []; // array to store obstacles
-    const obstacleWidth = 30; // Width of the obstacles
-    const gapHeight = 100; // Gap height between top and bottom obstacles
+    // array that stores obstacle objects
+    const obstacles = [
+        {
+            width: 30,
+            height: 0,
+            y: 0,
+            x: canvas.width,
+        },
+        {
+            width: 30,
+            height: 0,
+            y: 0,
+            x: canvas.width,
+        }
+    ];
+    const gapHeight = 70; // Gap height between top and bottom obstacles
     const obstacleSpeed = 2; // Speed at which obstacles move from right to left
 
-    function createObstacle() {
-        const obstacle = {
-            x: canvas.width, // Start the obstacle from the right side of the canvas
-            topY: (canvas.height - gapHeight) / 2, // Random top obstacle position
-            bottomY: (canvas.height + gapHeight) / 2, // Calculate bottom obstacle position
-        };
-        obstacles.push(obstacle); // insert obstacle into obstacles array
-    }
+    function spawnobstacles() {
+        if (obstacles[0].x + obstacles[0].width <0) enemiesSpawned = false;
 
-    function updateObstacles() {
-        // every obstacle inside obstacles[]
-        for (let i = obstacles.length - 1; i >= 0; i--) {
-            const obstacle = obstacles[i];
-            obstacle.x -= obstacleSpeed; // Movement of obstacle
-
-            // Remove obstacles that have moved out of the canvas
-            if (obstacle.x + obstacleWidth < 0) {
-                obstacles.splice(i, 1);
-            }
-        }
-
-        // Create new obstacles when needed
-        if (obstacles.length < 2) {
-            createObstacle();
-        }
+        if (enemiesSpawned === true) return;
+        obstacles[0].x = canvas.width;
+        obstacles[1].x = canvas.width;
+        obstacles[0].y = 0;
+        obstacles[0].height = Math.random() * (canvas.height - gapHeight);
+        obstacles[1].y = obstacles[0].height + gapHeight;
+        obstacles[1].height = canvas.height + obstacles[1].y;
+        enemiesSpawned = true;
     }
 
     // jump when spacebar is hit
@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // add gravity to the velocity
         bird.velocityY += bird.gravity;
 
-        // Apply velocity after first jump
+        // Apply velocity to bird y position
         bird.y += bird.velocityY;
 
         // prevent bird from falling below canvas
@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (firstJump) {
             imgX -= scrollSpeed; // movement of background image
             updateBird(); // draw new bird position
-            updateObstacles();// Update and draw obstacles
+            spawnobstacles(); // spawn obstacles once first jump performed
         }
 
         // when the first image goes completely out of view to the left, reset its position
@@ -101,12 +101,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         context.fillStyle = "green"; // Obstacle color
-        for (const obstacle of obstacles) {
-            // Draw top obstacle
-            context.fillRect(obstacle.x, 0, obstacleWidth, obstacle.topY);
-            // Draw bottom obstacle
-            context.fillRect(obstacle.x, obstacle.bottomY, obstacleWidth, canvas.height - obstacle.bottomY);
-        }
+        obstacles.forEach(obstacle => {
+            context.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+            obstacle.x -= obstacleSpeed;
+        });
 
 
         context.fillStyle = "blue"; // bird color
