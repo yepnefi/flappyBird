@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const scrollSpeed = 2;
     let imgX = 0;
     let firstJump = false; // flag to track first jump
-    let enemiesSpawned = false;
+    let obstaclesSpawned = false; // flag to track if obstacles are on screen
 
     const bird = {
         x: canvas.width / 100, // starting x position
@@ -37,16 +37,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const obstacleSpeed = 2; // Speed at which obstacles move from right to left
 
     function spawnobstacles() {
-        if (obstacles[0].x + obstacles[0].width <0) enemiesSpawned = false;
+        if (obstacles[0].x + obstacles[0].width <0) obstaclesSpawned = false;
 
-        if (enemiesSpawned === true) return;
+        if (obstaclesSpawned === true) return;
         obstacles[0].x = canvas.width;
         obstacles[1].x = canvas.width;
         obstacles[0].y = 0;
         obstacles[0].height = Math.random() * (canvas.height - gapHeight);
         obstacles[1].y = obstacles[0].height + gapHeight;
         obstacles[1].height = canvas.height + obstacles[1].y;
-        enemiesSpawned = true;
+        obstaclesSpawned = true;
     }
 
     // jump when spacebar is hit
