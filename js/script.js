@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     bgImg.src = "bgspace.png";
     const scrollSpeed = 2;
     let imgX = 0;
-    let firstJump = false;
+    let firstJump = false; // flag to track first jump
 
     const bird = {
         x: canvas.width / 100, // starting x position
@@ -26,16 +26,17 @@ document.addEventListener("DOMContentLoaded", () => {
     function createObstacle() {
         const obstacle = {
             x: canvas.width, // Start the obstacle from the right side of the canvas
-            topY: Math.random() * (canvas.height - gapHeight), // Random top obstacle position
-            bottomY: Math.random() * (canvas.height - gapHeight) + gapHeight, // Calculate bottom obstacle position
+            topY: (canvas.height - gapHeight) / 2, // Random top obstacle position
+            bottomY: (canvas.height + gapHeight) / 2, // Calculate bottom obstacle position
         };
-        obstacles.push(obstacle);
+        obstacles.push(obstacle); // insert obstacle into obstacles array
     }
 
     function updateObstacles() {
+        // every obstacle inside obstacles[]
         for (let i = obstacles.length - 1; i >= 0; i--) {
             const obstacle = obstacles[i];
-            obstacle.x -= obstacleSpeed; // Move obstacle to the left
+            obstacle.x -= obstacleSpeed; // Movement of obstacle
 
             // Remove obstacles that have moved out of the canvas
             if (obstacle.x + obstacleWidth < 0) {
@@ -55,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!firstJump) {
                 firstJump = true;
             }
-            // on jump
+            // jump
             bird.velocityY = bird.jumpStrength;
         }
     });
@@ -91,16 +92,16 @@ document.addEventListener("DOMContentLoaded", () => {
         // draw bg img 2
         context.drawImage(bgImg, imgX + canvas.width, 0, canvas.width, canvas.height);
 
-        // update img width once first jump was performed
+        // update img width and obstacle position once first jump was performed
         if (firstJump) {
             imgX -= scrollSpeed;
+            updateObstacles();// Update and draw obstacles
         }
 
         // when the first image goes completely out of view to the left, reset its position
         if (imgX <= -canvas.height) {
             imgX = 0;
         }
-        updateObstacles(); // Update and draw obstacles
 
         context.fillStyle = "green"; // Obstacle color
         for (const obstacle of obstacles) {
