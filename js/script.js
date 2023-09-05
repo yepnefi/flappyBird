@@ -7,6 +7,8 @@ document.addEventListener("DOMContentLoaded", () => {
     let imgX = 0;
     let firstJump = false; // flag to track first jump
     let obstaclesSpawned = false; // flag to track if obstacles are on screen
+    let score = 0; // initialize score
+    let increasingDifficulty = false; // flag to track if difficulty is increasing
 
     const bird = {
         x: canvas.width / 100, // starting x position
@@ -17,6 +19,20 @@ document.addEventListener("DOMContentLoaded", () => {
         gravity: 0.2, // Gravity strength
         jumpStrength: -4, // Strength of the jump
     };
+
+    // function checkCollision() {
+    //     // Check if the bird has passed an obstacle pair
+    //     if (bird.x > obstacles[0].x + obstacles[0].width && !obstacles[0].scored) {
+    //         obstacles[0].scored = true; // Mark the obstacle as scored
+    //         score++; // Increment the score
+    //     }
+    // }
+
+    function drawScore() {
+        context.fillStyle = "white";
+        context.font = "20px Arial";
+        context.fillText("Score: " + score, 10, 30);
+    }
 
     // array that stores obstacle objects
     const obstacles = [
@@ -34,10 +50,18 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     ];
     const gapHeight = 70; // Gap height between top and bottom obstacles
-    const obstacleSpeed = 2; // Speed at which obstacles move from right to left
+    let obstacleSpeed = 2; // Speed at which obstacles move from right to left
+
+    // difficulty added by increasing obstacle speed
+    // setInterval(() => {
+    //     obstacleSpeed += 0.4
+    // }, 3000)
+
+
 
     function spawnobstacles() {
-        if (obstacles[0].x + obstacles[0].width <0) obstaclesSpawned = false;
+        // if obstacle has moved offscreen set obstaclesSpawned to false
+        if (obstacles[0].x + obstacles[0].width < 0) obstaclesSpawned = false;
 
         if (obstaclesSpawned === true) return;
         obstacles[0].x = canvas.width;
@@ -55,10 +79,25 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!firstJump) {
                 firstJump = true;
             }
+
             // jump
             bird.velocityY = bird.jumpStrength;
         }
     });
+
+    function checkCollision() {
+        obstacles.forEach((obstacle) => {
+            if (
+                bird.x + bird.width > obstacle.x &&
+                bird.x < obstacle.x + obstacle.width &&
+                bird.y + bird.height > obstacle.y &&
+                bird.y < obstacle.y + obstacle.height
+            ) {
+                // Collision detected
+                alert("test");
+            }
+        });
+    }
 
     function updateBird() {
         // add gravity to the velocity
@@ -93,7 +132,19 @@ document.addEventListener("DOMContentLoaded", () => {
             imgX -= scrollSpeed; // movement of background image
             updateBird(); // draw new bird position
             spawnobstacles(); // spawn obstacles once first jump performed
+
+
+            if (!increasingDifficulty) {
+                // Start increasing difficulty every 5 seconds once the first jump is performed
+                setInterval(() => {
+                    obstacleSpeed += 0.3;
+                }, 5000);
+                increasingDifficulty = true;
+            }
         }
+
+        // collision detection
+        checkCollision();
 
         // when the first image goes completely out of view to the left, reset its position
         if (imgX <= -canvas.height) {
@@ -109,6 +160,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         context.fillStyle = "blue"; // bird color
         context.fillRect(bird.x, bird.y, bird.width, bird.height); // draw bird
+
+        // checkCollision();
+        drawScore();
         requestAnimationFrame(gameloop); // adds animation for each frame + repeats the loop
     }
 
