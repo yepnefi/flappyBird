@@ -60,7 +60,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function spawnobstacles() {
         // if obstacle has moved offscreen set obstaclesSpawned to false
-        if (obstacles[0].x + obstacles[0].width < 0) obstaclesSpawned = false;
+        if (obstacles[0].x + obstacles[0].width < 0){
+            obstaclesSpawned = false;
+            score++;
+        }
 
 
         // if obstacles are already on screen, don't draw new ones
@@ -87,6 +90,15 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    function lose(){
+        // alert(`Final Score: ${score}`);
+        score = 0; // reset score
+        firstJump= false; // reset firstJump state
+        obstacles.forEach(obstacle => {obstacle.x = canvas.width});
+        bird.x = canvas.width / 100;
+        bird.y = canvas.height / 2.5;
+    }
+
     function checkCollision() {
         obstacles.forEach((obstacle) => {
             if (
@@ -96,7 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 bird.y < obstacle.y + obstacle.height
             ) {
                 // Collision detected
-                alert("test");
+                lose();
             }
         });
     }
