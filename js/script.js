@@ -1,10 +1,19 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // Get the canvas element and its 2D drawing context
     const canvas = document.getElementById('gamecanvas');
     const context = canvas.getContext('2d');
-    const bgImg = new Image(); // background image
+
+    // background image
+    const bgImg = new Image();
     bgImg.src = "bgspace.png";
+
+    // Background scrolling speed
     const scrollSpeed = 2;
+
+    // Initial position of the background image
     let imgX = 0;
+
+    // Flags to track game state
     let firstJump = false; // flag to track first jump
     let obstaclesSpawned = false; // flag to track if obstacles are on screen
     let score = 0; // initialize score
@@ -20,14 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
         jumpStrength: -4, // Strength of the jump
     };
 
-    // function checkCollision() {
-    //     // Check if the bird has passed an obstacle pair
-    //     if (bird.x > obstacles[0].x + obstacles[0].width && !obstacles[0].scored) {
-    //         obstacles[0].scored = true; // Mark the obstacle as scored
-    //         score++; // Increment the score
-    //     }
-    // }
-
+    // Function to draw the score on the canvas
     function drawScore() {
         context.fillStyle = "white";
         context.font = "20px Arial";
@@ -49,20 +51,19 @@ document.addEventListener("DOMContentLoaded", () => {
             x: canvas.width,
         }
     ];
-    const gapHeight = 70; // Gap height between top and bottom obstacles
-    let obstacleSpeed = 2; // Speed at which obstacles move from right to left
 
-    // difficulty added by increasing obstacle speed
-    // setInterval(() => {
-    //     obstacleSpeed += 0.4
-    // }, 3000)
+    // Gap height between top and bottom obstacles
+    const gapHeight = 70;
 
-
+    // Speed at which obstacles move from right to left
+    let obstacleSpeed = 2;
 
     function spawnobstacles() {
         // if obstacle has moved offscreen set obstaclesSpawned to false
         if (obstacles[0].x + obstacles[0].width < 0) obstaclesSpawned = false;
 
+
+        // if obstacles are already on screen, don't draw new ones
         if (obstaclesSpawned === true) return;
         obstacles[0].x = canvas.width;
         obstacles[1].x = canvas.width;
@@ -77,10 +78,11 @@ document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener("keydown", (event) => {
         if (event.code === "Space") {
             if (!firstJump) {
+                // sets firstJump flag to true
                 firstJump = true;
             }
 
-            // jump
+            // make the bird jump
             bird.velocityY = bird.jumpStrength;
         }
     });
@@ -161,10 +163,9 @@ document.addEventListener("DOMContentLoaded", () => {
         context.fillStyle = "blue"; // bird color
         context.fillRect(bird.x, bird.y, bird.width, bird.height); // draw bird
 
-        // checkCollision();
         drawScore();
         requestAnimationFrame(gameloop); // adds animation for each frame + repeats the loop
     }
 
-    gameloop(); // do the game
+    gameloop(); // start the game loop
 });
