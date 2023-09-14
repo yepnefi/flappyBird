@@ -18,7 +18,6 @@ document.addEventListener("DOMContentLoaded", () => {
     let obstaclesSpawned = false; // flag to track if obstacles are on screen
     let score = 0; // initialize score
     let increasingDifficulty = false; // flag to track if difficulty is increasing
-    let gameIsOver = false;
 
     const bird = {
         x: canvas.width / 100, // starting x position
@@ -57,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const gapHeight = 70;
 
     // Speed at which obstacles move from right to left
-    let obstacleSpeed= 2;
+    let obstacleSpeed= 0;
 
     function spawnobstacles() {
         // if obstacle has moved offscreen set obstaclesSpawned to false
@@ -101,7 +100,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         bird.x = canvas.width / 100;
         bird.y = canvas.height / 2.5;
-        obstacleSpeed = 2;
+        obstacleSpeed = 0;
+        clearInterval(increasingDifficulty);
     }
 
     function checkCollision() {
@@ -140,6 +140,8 @@ document.addEventListener("DOMContentLoaded", () => {
         // do this once first jump was performed
         if (firstJump) {
             imgX -= scrollSpeed; // movement of background image
+            obstacleSpeed = 2;
+
             updateBird(); // draw new bird position
             spawnobstacles(); // spawn obstacles once first jump performed
 
@@ -166,11 +168,11 @@ document.addEventListener("DOMContentLoaded", () => {
             obstacle.x -= obstacleSpeed;
         });
 
+        drawScore();
 
         context.fillStyle = "blue"; // bird color
         context.fillRect(bird.x, bird.y, bird.width, bird.height); // draw bird
 
-        drawScore();
         requestAnimationFrame(gameloop); // adds animation for each frame + repeats the loop
     }
 
