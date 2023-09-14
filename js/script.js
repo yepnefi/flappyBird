@@ -18,6 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let obstaclesSpawned = false; // flag to track if obstacles are on screen
     let score = 0; // initialize score
     let increasingDifficulty = false; // flag to track if difficulty is increasing
+    let gameIsOver = false;
 
     const bird = {
         x: canvas.width / 100, // starting x position
@@ -56,11 +57,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const gapHeight = 70;
 
     // Speed at which obstacles move from right to left
-    let obstacleSpeed = 2;
+    let obstacleSpeed= 2;
 
     function spawnobstacles() {
         // if obstacle has moved offscreen set obstaclesSpawned to false
-        if (obstacles[0].x + obstacles[0].width < 0){
+        if (obstacles[0].x + obstacles[0].width < 0) {
             obstaclesSpawned = false;
             score++;
         }
@@ -90,13 +91,17 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    function lose(){
-        // alert(`Final Score: ${score}`);
+    function lose() {
         score = 0; // reset score
-        firstJump= false; // reset firstJump state
-        obstacles.forEach(obstacle => {obstacle.x = canvas.width});
+        firstJump = false; // reset firstJump state
+
+        obstacles.forEach(obstacle => {
+            obstacle.x = canvas.width
+        });
+
         bird.x = canvas.width / 100;
         bird.y = canvas.height / 2.5;
+        obstacleSpeed = 2;
     }
 
     function checkCollision() {
@@ -105,7 +110,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 bird.x + bird.width > obstacle.x &&
                 bird.x < obstacle.x + obstacle.width &&
                 bird.y + bird.height > obstacle.y &&
-                bird.y < obstacle.y + obstacle.height
+                bird.y < obstacle.y + obstacle.height ||
+                bird.y + bird.height > canvas.height ||
+                bird.y < 0
             ) {
                 // Collision detected
                 lose();
@@ -119,17 +126,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Apply velocity to bird y position
         bird.y += bird.velocityY;
-
-        // prevent bird from falling below canvas
-        if (bird.y + bird.height > canvas.height) {
-            bird.y = canvas.height - bird.height; // set bird to the bottom of canvas
-            bird.velocityY = 0; // stop downward velocity
-        }
-        // prevent bird from going above the canvas
-        if (bird.y < 0) {
-            bird.y = 0; // Set bird to the top of the canvas
-            bird.velocityY = 0; // stop the upward velocity
-        }
     }
 
     function gameloop() {
@@ -150,10 +146,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (!increasingDifficulty) {
                 // Start increasing difficulty every 5 seconds once the first jump is performed
-                setInterval(() => {
+                increasingDifficulty = setInterval(() => {
                     obstacleSpeed += 0.3;
                 }, 5000);
-                increasingDifficulty = true;
             }
         }
 
